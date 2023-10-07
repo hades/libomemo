@@ -24,6 +24,7 @@ include(GNUInstallDirs)
 option(BUILD_SHARED_LIBS "Build shared libraries (rather than static ones)" ON)
 option(OMEMO_INSTALL "Install build artifacts" ON)
 option(OMEMO_WITH_TESTS "Build test suite (depends on cmocka)" ON)
+option(OMEMO_WITH_ASAN "Enable address sanitizer for libs and tests" OFF)
 if(NOT _OMEMO_HELP)  # hide from "cmake -DOMEMO_HELP=ON -LH ." output
     option(_OMEMO_WARNINGS_AS_ERRORS "(Unofficial!) Turn warnings into errors" OFF)
     option(_OMEMO_WITH_COVERAGE "(Unofficial!) Build with coverage" OFF)
@@ -66,6 +67,16 @@ if(_OMEMO_WITH_COVERAGE)
     link_libraries(${_OMEMO_COVERAGE_FLAGS})
 endif()
 
+if(OMEMO_WITH_ASAN)
+    add_compile_options(
+        -fsanitize=address
+        -fno-omit-frame-pointer
+        -g3
+    )
+    add_link_options(
+        -fsanitize=address
+    )
+endif()
 
 #
 # Build dependencies
